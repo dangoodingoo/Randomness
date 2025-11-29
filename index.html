@@ -13,61 +13,56 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #000;
             color: #00ff00;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .header-frame {
+            background: #000;
+            border-bottom: 3px solid #00ff00;
+            padding: 1rem 2rem;
+            flex-shrink: 0;
         }
 
-        header {
-            text-align: center;
-            padding: 2rem 0;
-            border-bottom: 2px solid #00ff00;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-size: 3rem;
+        .main-title {
+            font-size: 2.5rem;
             text-shadow: 0 0 10px #00ff00;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0.8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .roulette-container {
-            text-align: center;
-            margin-bottom: 2rem;
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .spin-button {
             background: transparent;
-            border: 3px solid #00ff00;
+            border: 2px solid #00ff00;
             color: #00ff00;
-            padding: 1rem 3rem;
-            font-size: 1.5rem;
+            padding: 0.5rem 1.5rem;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
         }
 
         .spin-button:hover {
             background: #00ff00;
             color: #000;
-            text-shadow: none;
-            box-shadow: 0 0 20px #00ff00;
+            box-shadow: 0 0 15px #00ff00;
         }
 
         .spin-button:disabled {
@@ -75,49 +70,73 @@
             cursor: not-allowed;
         }
 
-        .loading {
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
             display: none;
-            margin: 2rem 0;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
         }
 
         .loading-spinner {
             border: 3px solid #333;
             border-top: 3px solid #00ff00;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin-bottom: 1rem;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loading-text {
+            font-size: 1.2rem;
         }
 
         .website-frame {
+            flex: 1;
             width: 100%;
-            height: 600px;
-            border: 3px solid #00ff00;
+            border: none;
             background: #000;
-            margin-bottom: 1rem;
             transition: opacity 0.5s ease;
         }
 
+        .footer-frame {
+            background: #000;
+            border-top: 3px solid #00ff00;
+            padding: 1rem 2rem;
+            flex-shrink: 0;
+        }
+
         .info-panel {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 1rem;
-            border: 1px solid #00ff00;
-            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .url-display {
+            flex: 1;
+            min-width: 300px;
             font-size: 0.9rem;
         }
 
         .stats {
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 2rem;
         }
 
         .stat-item {
@@ -125,34 +144,17 @@
         }
 
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #ffff00;
         }
 
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            border-top: 1px solid #00ff00;
-            margin-top: 2rem;
-            opacity: 0.7;
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
 
-        /* CRT screen effect */
-        .crt::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: rgba(0, 255, 0, 0.02);
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        /* Scanlines */
+        /* CRT effects */
         .crt::before {
             content: " ";
             display: block;
@@ -171,96 +173,139 @@
             z-index: 9999;
         }
 
+        .crt::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 255, 0, 0.03);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+
+        .pulse {
+            animation: pulse 1s;
+        }
+
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
+            .header-frame {
+                padding: 1rem;
             }
             
-            .website-frame {
-                height: 400px;
+            .main-title {
+                font-size: 1.8rem;
             }
             
-            .spin-button {
-                padding: 0.8rem 2rem;
-                font-size: 1.2rem;
+            .subtitle {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .info-panel {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .stats {
+                width: 100%;
+                justify-content: space-between;
             }
         }
     </style>
 </head>
 <body class="crt">
-    <div class="container">
-        <header>
-            <h1>LostWeb Roulette</h1>
-            <div class="subtitle">Digital Archaeology Slot Machine • 1996-2008 • Zero Budget</div>
-        </header>
-
-        <div class="roulette-container">
-            <button id="spinButton" class="spin-button">SPIN THE WEB</button>
-            
-            <div id="loading" class="loading">
-                <div class="loading-spinner"></div>
-                <p>Excavating digital artifacts...</p>
+    <div class="header-frame">
+        <div class="main-title">LostWeb Roulette</div>
+        <div class="subtitle">
+            <span>Digital Archaeology Slot Machine • 1996-2008</span>
+            <div class="controls">
+                <button id="spinButton" class="spin-button">SPIN THE WEB</button>
+                <span>Press SPACE</span>
             </div>
         </div>
+    </div>
 
-        <div class="info-panel">
-            <div id="urlInfo">Ready to explore forgotten corners of the early web</div>
+    <div class="content-area">
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Excavating digital artifacts...</div>
         </div>
-
         <iframe 
             id="websiteFrame" 
             class="website-frame"
             sandbox="allow-scripts allow-forms allow-same-origin"
             loading="lazy"
         ></iframe>
+    </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-label">Pages Discovered</div>
-                <div id="discoveredCount" class="stat-value">0</div>
+    <div class="footer-frame">
+        <div class="info-panel">
+            <div id="urlInfo" class="url-display">
+                Ready to explore forgotten corners of the early web
             </div>
-            <div class="stat-item">
-                <div class="stat-label">Current Era</div>
-                <div id="currentEra" class="stat-value">-</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Archaeology Level</div>
-                <div id="archaeologyLevel" class="stat-value">Novice</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="discoveredCount">0</div>
+                    <div class="stat-label">Pages Found</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="currentEra">-</div>
+                    <div class="stat-label">Time Period</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="archaeologyLevel">Novice</div>
+                    <div class="stat-label">Rank</div>
+                </div>
             </div>
         </div>
-
-        <footer>
-            <p>LostWeb Roulette • Powered by Internet Archive • No live servers were scanned in the making of this website</p>
-            <p>All content from publicly available historical archives • Respects robots.txt and archive policies</p>
-        </footer>
     </div>
 
     <script>
+        // File: frontend/app.js
         class LostWebRoulette {
             constructor() {
                 this.spinCount = 0;
-                this.backendUrl = 'https://your-worker.your-subdomain.workers.dev'; // Replace with actual worker URL
-                this.spinButton = document.getElementById('spinButton');
-                this.loadingElement = document.getElementById('loading');
-                this.websiteFrame = document.getElementById('websiteFrame');
-                this.urlInfo = document.getElementById('urlInfo');
-                this.discoveredCount = document.getElementById('discoveredCount');
-                this.currentEra = document.getElementById('currentEra');
-                this.archaeologyLevel = document.getElementById('archaeologyLevel');
+                this.backendUrl = 'https://your-worker.your-subdomain.workers.dev';
+                this.elements = {
+                    spinButton: document.getElementById('spinButton'),
+                    loadingOverlay: document.getElementById('loadingOverlay'),
+                    websiteFrame: document.getElementById('websiteFrame'),
+                    urlInfo: document.getElementById('urlInfo'),
+                    discoveredCount: document.getElementById('discoveredCount'),
+                    currentEra: document.getElementById('currentEra'),
+                    archaeologyLevel: document.getElementById('archaeologyLevel')
+                };
                 
-                this.initializeEventListeners();
+                this.initialize();
             }
 
-            initializeEventListeners() {
-                this.spinButton.addEventListener('click', () => this.spin());
+            initialize() {
+                this.elements.spinButton.addEventListener('click', () => this.spin());
                 
-                // Keyboard shortcut
                 document.addEventListener('keydown', (e) => {
                     if (e.code === 'Space' && !e.target.matches('input, textarea')) {
                         e.preventDefault();
                         this.spin();
                     }
                 });
+
+                // Load initial stats from localStorage
+                this.loadStats();
             }
 
             async spin() {
@@ -274,98 +319,102 @@
                         await this.displayWebsite(data.url, data.original);
                         this.spinCount++;
                         this.updateStats();
+                        this.saveStats();
                         this.celebrate();
                     } else {
-                        this.showError('Failed to find a valid archived page. Try again!');
+                        this.showError('Digging failed! No archived page found. Try again.');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    this.showError('Network error. Please check your connection and try again.');
+                    this.showError('Network connection lost. Check your internet and try again.');
                 } finally {
                     this.setLoading(false);
                 }
             }
 
             async displayWebsite(archiveUrl, originalUrl) {
-                this.websiteFrame.style.opacity = '0';
+                this.elements.websiteFrame.style.opacity = '0';
                 
-                // Extract timestamp for era display
+                // Extract and display timestamp
                 const timestampMatch = archiveUrl.match(/web\/(\d{4})(\d{2})(\d{2})/);
                 if (timestampMatch) {
                     const year = timestampMatch[1];
                     const month = timestampMatch[2];
-                    this.currentEra.textContent = `${year}-${month}`;
-                    
-                    // Update archaeology level based on year
+                    this.elements.currentEra.textContent = `${year}-${month}`;
                     this.updateArchaeologyLevel(year);
                 }
                 
-                this.urlInfo.innerHTML = `
-                    <strong>Original URL:</strong> ${this.escapeHtml(originalUrl)}<br>
-                    <strong>Archived:</strong> ${timestampMatch ? `${timestampMatch[1]}-${timestampMatch[2]}-${timestampMatch[3]}` : 'Unknown'}
+                this.elements.urlInfo.innerHTML = `
+                    <strong>Original:</strong> ${this.escapeHtml(originalUrl)}<br>
+                    <strong>Archived:</strong> ${timestampMatch ? `${timestampMatch[1]}-${timestampMatch[2]}` : 'Unknown'}
                 `;
                 
-                // Small delay for smooth transition
                 await new Promise(resolve => setTimeout(resolve, 300));
-                
-                this.websiteFrame.src = archiveUrl;
-                this.websiteFrame.style.opacity = '1';
+                this.elements.websiteFrame.src = archiveUrl;
+                this.elements.websiteFrame.style.opacity = '1';
             }
 
             updateArchaeologyLevel(year) {
                 const yearNum = parseInt(year);
                 let level = 'Novice';
                 
-                if (yearNum <= 1998) level = 'Expert';
-                else if (yearNum <= 2000) level = 'Advanced';
-                else if (yearNum <= 2002) level = 'Intermediate';
-                else if (yearNum <= 2004) level = 'Apprentice';
+                if (yearNum <= 1997) level = 'Time Traveler';
+                else if (yearNum <= 1999) level = 'Digital Archaeologist';
+                else if (yearNum <= 2001) level = 'Web Historian';
+                else if (yearNum <= 2003) level = 'Explorer';
+                else if (yearNum <= 2005) level = 'Apprentice';
                 
-                this.archaeologyLevel.textContent = level;
+                this.elements.archaeologyLevel.textContent = level;
             }
 
             updateStats() {
-                this.discoveredCount.textContent = this.spinCount;
+                this.elements.discoveredCount.textContent = this.spinCount;
                 
-                // Update level titles
-                if (this.spinCount >= 50) this.archaeologyLevel.textContent = 'Digital Archaeologist';
-                else if (this.spinCount >= 25) this.archaeologyLevel.textContent = 'Time Traveler';
-                else if (this.spinCount >= 10) this.archaeologyLevel.textContent = 'Explorer';
+                // Update rank based on total discoveries
+                if (this.spinCount >= 100) this.elements.archaeologyLevel.textContent = 'Master Archaeologist';
+                else if (this.spinCount >= 50) this.elements.archaeologyLevel.textContent = 'Senior Explorer';
+                else if (this.spinCount >= 25) this.elements.archaeologyLevel.textContent = 'Journeyman';
             }
 
             celebrate() {
-                // Simple celebration effect
                 if (this.spinCount % 5 === 0) {
-                    document.body.style.animation = 'none';
+                    document.body.classList.remove('pulse');
                     setTimeout(() => {
-                        document.body.style.animation = 'pulse 0.5s';
+                        document.body.classList.add('pulse');
                     }, 10);
-                    
-                    // Add CSS for pulse animation
-                    if (!document.querySelector('#pulse-animation')) {
-                        const style = document.createElement('style');
-                        style.id = 'pulse-animation';
-                        style.textContent = `
-                            @keyframes pulse {
-                                0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
-                                70% { box-shadow: 0 0 0 20px rgba(0, 255, 0, 0); }
-                                100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
                 }
             }
 
             setLoading(loading) {
-                this.spinButton.disabled = loading;
-                this.loadingElement.style.display = loading ? 'block' : 'none';
-                this.spinButton.textContent = loading ? 'DIGGING...' : 'SPIN THE WEB';
+                this.elements.spinButton.disabled = loading;
+                this.elements.loadingOverlay.style.display = loading ? 'flex' : 'none';
+                this.elements.spinButton.textContent = loading ? 'DIGGING...' : 'SPIN THE WEB';
             }
 
             showError(message) {
-                this.urlInfo.innerHTML = `<span style="color: #ff4444;">${this.escapeHtml(message)}</span>`;
-                this.websiteFrame.src = 'about:blank';
+                this.elements.urlInfo.innerHTML = `<span style="color: #ff4444;">${this.escapeHtml(message)}</span>`;
+                this.elements.websiteFrame.src = 'about:blank';
+            }
+
+            saveStats() {
+                const stats = {
+                    spinCount: this.spinCount,
+                    lastPlayed: new Date().toISOString()
+                };
+                localStorage.setItem('lostweb-stats', JSON.stringify(stats));
+            }
+
+            loadStats() {
+                try {
+                    const stats = JSON.parse(localStorage.getItem('lostweb-stats'));
+                    if (stats && stats.spinCount) {
+                        this.spinCount = stats.spinCount;
+                        this.elements.discoveredCount.textContent = this.spinCount;
+                        this.updateStats();
+                    }
+                } catch (e) {
+                    console.log('No saved stats found');
+                }
             }
 
             escapeHtml(unsafe) {
@@ -378,7 +427,7 @@
             }
         }
 
-        // Initialize the application
+        // Initialize application
         document.addEventListener('DOMContentLoaded', () => {
             new LostWebRoulette();
         });
