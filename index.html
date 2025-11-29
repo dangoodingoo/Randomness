@@ -32,8 +32,9 @@
 
         .main-title {
             font-size: 2.5rem;
-            text-shadow: 0 0 10px #00ff00;
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
             margin-bottom: 0.5rem;
+            letter-spacing: 2px;
         }
 
         .subtitle {
@@ -53,11 +54,14 @@
 
         .search-box {
             background: #000;
-            border: 1px solid #00ff00;
+            border: 2px solid #00ff00;
             color: #00ff00;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1rem;
             font-family: 'Courier New', monospace;
-            width: 200px;
+            font-size: 0.95rem;
+            width: 250px;
+            transition: all 0.3s ease;
+            display: none;
         }
 
         .search-box::placeholder {
@@ -66,24 +70,29 @@
 
         .search-box:focus {
             outline: none;
-            box-shadow: 0 0 10px #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            border-color: #00ff00;
         }
 
         .spin-button {
             background: transparent;
             border: 2px solid #00ff00;
             color: #00ff00;
-            padding: 0.5rem 1.5rem;
+            padding: 0.6rem 1.5rem;
             font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .spin-button:hover:not(:disabled) {
             background: #00ff00;
             color: #000;
-            box-shadow: 0 0 15px #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            transform: translateY(-2px);
         }
 
         .spin-button:disabled {
@@ -105,31 +114,94 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
+            background: #000;
             display: none;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             z-index: 1000;
+            overflow: hidden;
         }
 
         .loading-overlay.active {
             display: flex;
         }
 
-        .loading-spinner {
-            border: 3px solid #333;
-            border-top: 3px solid #00ff00;
+        .time-machine {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            perspective: 1000px;
+        }
+
+        .time-tunnel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tunnel-ring {
+            position: absolute;
+            border: 2px solid #00ff00;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
+            animation: tunnel 1.5s linear infinite;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .tunnel-ring:nth-child(1) { animation-delay: 0s; }
+        .tunnel-ring:nth-child(2) { animation-delay: 0.3s; }
+        .tunnel-ring:nth-child(3) { animation-delay: 0.6s; }
+        .tunnel-ring:nth-child(4) { animation-delay: 0.9s; }
+        .tunnel-ring:nth-child(5) { animation-delay: 1.2s; }
+
+        @keyframes tunnel {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 0;
+                transform: translateZ(0px);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+                transform: translateZ(-500px);
+            }
         }
 
         .loading-text {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             text-align: center;
+            margin-top: 2rem;
+            text-shadow: 0 0 10px #00ff00;
+            animation: pulse-text 1s ease-in-out infinite;
+        }
+
+        .year-counter {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffff00;
+            text-shadow: 0 0 20px #ffff00;
+            margin-top: 1rem;
+            animation: flicker-fast 0.1s infinite;
+            letter-spacing: 4px;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes flicker-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         .website-frame {
@@ -142,6 +214,12 @@
 
         .website-frame.visible {
             display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .footer-frame {
@@ -165,11 +243,13 @@
             flex: 1;
             min-width: 300px;
             font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .stats {
             display: flex;
             gap: 2rem;
+            align-items: center;
         }
 
         .stat-item {
@@ -177,14 +257,16 @@
         }
 
         .stat-value {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #ffff00;
+            text-shadow: 0 0 10px #ffff00;
         }
 
         .stat-label {
             font-size: 0.8rem;
             opacity: 0.8;
+            margin-top: 0.2rem;
         }
 
         .kofi-button {
@@ -203,6 +285,7 @@
             background: #00ff00;
             color: #000;
             box-shadow: 0 0 15px #00ff00;
+            transform: translateY(-2px);
         }
 
         .kofi-text {
@@ -265,17 +348,6 @@
             opacity: 0.3;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(0, 255, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
-        }
-
         @keyframes flicker {
             0%, 100% { opacity: 0.1; }
             10%, 30%, 50%, 70%, 90% { opacity: 0.05; }
@@ -283,7 +355,13 @@
         }
 
         .pulse {
-            animation: pulse 1s;
+            animation: pulse 0.8s;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 255, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
         }
 
         @media (max-width: 768px) {
@@ -319,6 +397,15 @@
             .stats {
                 width: 100%;
                 justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .time-machine {
+                height: 150px;
+            }
+
+            .year-counter {
+                font-size: 2rem;
             }
         }
     </style>
@@ -333,21 +420,29 @@
     </div>
 
     <div class="header-frame">
-        <div class="main-title">LostWeb Roulette</div>
+        <div class="main-title">Lost Web Roulette</div>
         <div class="subtitle">
-            <span>Digital Archaeology Slot Machine • 1996-2008</span>
+            <span>◆ Digital Archaeology Slot Machine • 1996-2008 ◆</span>
             <div class="controls">
-                <input type="text" id="searchInput" class="search-box" placeholder="Search topic (or leave empty for random)">
-                <button id="spinButton" class="spin-button">SPIN THE WEB</button>
-                <span>Press ENTER to search</span>
+                <button id="spinButton" class="spin-button">→ SPIN THE WEB ←</button>
+                <span style="opacity: 0.7; font-size: 0.9rem;">Press SPACE to spin</span>
             </div>
         </div>
     </div>
 
     <div class="content-area">
         <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-spinner"></div>
-            <div class="loading-text" id="loadingMessage">Excavating digital artifacts...</div>
+            <div class="time-machine">
+                <div class="time-tunnel">
+                    <div class="tunnel-ring"></div>
+                    <div class="tunnel-ring"></div>
+                    <div class="tunnel-ring"></div>
+                    <div class="tunnel-ring"></div>
+                    <div class="tunnel-ring"></div>
+                </div>
+            </div>
+            <div class="loading-text" id="loadingMessage">⟡ TIME TRAVELLING ⟡</div>
+            <div class="year-counter" id="yearCounter">2025</div>
         </div>
         <iframe 
             id="websiteFrame" 
@@ -359,7 +454,7 @@
     <div class="footer-frame">
         <div class="info-panel">
             <div id="urlInfo" class="url-display">
-                Ready to explore forgotten corners of the early web
+                ▸ Ready to explore forgotten corners of the early web
             </div>
             <div class="stats">
                 <div class="stat-item">
@@ -367,12 +462,12 @@
                     <div class="stat-label">Pages Found</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" id="currentEra">-</div>
+                    <div class="stat-value" id="currentEra">—</div>
                     <div class="stat-label">Time Period</div>
                 </div>
                 <div class="stat-item">
                     <a href="https://ko-fi.com/dangodingo" target="_blank" class="kofi-button">
-                        <span class="kofi-text">☕ Support on Ko-fi</span>
+                        <span class="kofi-text">☕ Support</span>
                     </a>
                 </div>
             </div>
@@ -382,16 +477,16 @@
     <script>
         class LostWebRoulette {
             constructor() {
-                // Store stats in memory instead of localStorage
                 this.spinCount = 0;
                 this.backendUrl = 'https://lostweb-roulette.lostweb-roulette.workers.dev';
                 this.isLoading = false;
+                this.yearInterval = null;
                 
                 this.elements = {
                     spinButton: document.getElementById('spinButton'),
-                    searchInput: document.getElementById('searchInput'),
                     loadingOverlay: document.getElementById('loadingOverlay'),
                     loadingMessage: document.getElementById('loadingMessage'),
+                    yearCounter: document.getElementById('yearCounter'),
                     websiteFrame: document.getElementById('websiteFrame'),
                     urlInfo: document.getElementById('urlInfo'),
                     discoveredCount: document.getElementById('discoveredCount'),
@@ -404,40 +499,72 @@
             initialize() {
                 this.elements.spinButton.addEventListener('click', () => this.spin());
                 
-                this.elements.searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !this.isLoading) {
-                        this.spin();
-                    }
-                });
-                
                 document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space' && !e.target.matches('input, textarea') && !this.isLoading) {
+                    if (e.code === 'Space' && !this.isLoading) {
                         e.preventDefault();
                         this.spin();
                     }
                 });
             }
 
+            startYearCountdown(targetYear) {
+                let currentYear = 2025;
+                this.elements.yearCounter.textContent = currentYear;
+                
+                const step = () => {
+                    currentYear -= Math.floor(Math.random() * 3) + 1;
+                    if (currentYear <= targetYear) {
+                        currentYear = targetYear;
+                        this.elements.yearCounter.textContent = currentYear;
+                        clearInterval(this.yearInterval);
+                        return;
+                    }
+                    this.elements.yearCounter.textContent = currentYear;
+                };
+                
+                this.yearInterval = setInterval(step, 50);
+            }
+
+            stopYearCountdown() {
+                if (this.yearInterval) {
+                    clearInterval(this.yearInterval);
+                    this.yearInterval = null;
+                }
+            }
+
             async spin() {
                 if (this.isLoading) return;
                 
                 this.setLoading(true);
-                const searchTerm = this.elements.searchInput.value.trim();
+                
+                const messages = [
+                    'Searching archives...',
+                    'Loading snapshot...',
+                    'Connecting to Internet Archive...',
+                    'Retrieving page...'
+                ];
+                
+                let messageIndex = 0;
+                this.elements.loadingMessage.textContent = messages[0];
+                
+                const messageInterval = setInterval(() => {
+                    messageIndex = (messageIndex + 1) % messages.length;
+                    this.elements.loadingMessage.textContent = messages[messageIndex];
+                }, 800);
                 
                 try {
-                    let url;
-                    if (searchTerm) {
-                        this.elements.loadingMessage.textContent = `Searching for "${searchTerm}" in the archives...`;
-                        url = `${this.backendUrl}/search?q=${encodeURIComponent(searchTerm)}`;
-                    } else {
-                        this.elements.loadingMessage.textContent = 'Excavating random digital artifacts...';
-                        url = `${this.backendUrl}/random`;
-                    }
-
+                    const url = `${this.backendUrl}/random`;
                     const response = await fetch(url);
                     const data = await response.json();
                     
+                    clearInterval(messageInterval);
+                    
                     if (data.url) {
+                        const year = data.timestamp ? parseInt(data.timestamp.substring(0, 4)) : 2000;
+                        this.startYearCountdown(year);
+                        
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
                         this.displayWebsite(data.url, data.original, data.timestamp);
                         this.spinCount++;
                         this.updateStats();
@@ -445,18 +572,20 @@
                     } else {
                         this.showError(data.error || 'No archived pages found. Try again!');
                         this.setLoading(false);
+                        this.stopYearCountdown();
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    this.showError('Network error. Please check your connection and try again.');
+                    clearInterval(messageInterval);
+                    this.showError('Network error. Check connection and try again.');
                     this.setLoading(false);
+                    this.stopYearCountdown();
                 }
             }
 
             displayWebsite(archiveUrl, originalUrl, timestamp) {
-                // Extract year and month from timestamp
-                let year = '-';
-                let month = '-';
+                let year = '—';
+                let month = '—';
                 
                 if (timestamp && timestamp.length >= 6) {
                     year = timestamp.substring(0, 4);
@@ -465,36 +594,34 @@
                 }
                 
                 this.elements.urlInfo.innerHTML = `
-                    <strong>Original:</strong> ${this.escapeHtml(originalUrl)}<br>
-                    <strong>Archived:</strong> ${year}-${month}
+                    <strong>▸ Original:</strong> ${this.escapeHtml(originalUrl)}<br>
+                    <strong>▸ Archived:</strong> ${year}-${month}
                 `;
                 
-                // Clear previous iframe
                 this.elements.websiteFrame.src = '';
                 this.elements.websiteFrame.classList.remove('visible');
                 
-                // Small delay to ensure clean state
                 setTimeout(() => {
                     this.elements.websiteFrame.src = archiveUrl;
                     
-                    // Handle iframe load
                     const loadTimeout = setTimeout(() => {
-                        console.log('Iframe load timeout - displaying anyway');
                         this.elements.websiteFrame.classList.add('visible');
                         this.setLoading(false);
-                    }, 5000);
+                        this.stopYearCountdown();
+                    }, 3000);
 
                     this.elements.websiteFrame.onload = () => {
                         clearTimeout(loadTimeout);
                         this.elements.websiteFrame.classList.add('visible');
                         this.setLoading(false);
-                        console.log('Iframe loaded successfully');
+                        this.stopYearCountdown();
                     };
                     
                     this.elements.websiteFrame.onerror = () => {
                         clearTimeout(loadTimeout);
-                        this.showError('This page cannot be displayed. Some archived content may be incomplete.');
+                        this.showError('Page cannot be displayed. Archive may be incomplete.');
                         this.setLoading(false);
+                        this.stopYearCountdown();
                     };
                 }, 100);
             }
@@ -515,19 +642,18 @@
             setLoading(loading) {
                 this.isLoading = loading;
                 this.elements.spinButton.disabled = loading;
-                this.elements.searchInput.disabled = loading;
                 
                 if (loading) {
                     this.elements.loadingOverlay.classList.add('active');
-                    this.elements.spinButton.textContent = 'DIGGING...';
+                    this.elements.spinButton.textContent = '⟡ DIGGING...';
                 } else {
                     this.elements.loadingOverlay.classList.remove('active');
-                    this.elements.spinButton.textContent = 'SPIN THE WEB';
+                    this.elements.spinButton.textContent = '→ SPIN THE WEB ←';
                 }
             }
 
             showError(message) {
-                this.elements.urlInfo.innerHTML = `<span style="color: #ff4444;">${this.escapeHtml(message)}</span>`;
+                this.elements.urlInfo.innerHTML = `<span style="color: #ff4444;">✗ ${this.escapeHtml(message)}</span>`;
                 this.elements.websiteFrame.classList.remove('visible');
             }
 
@@ -541,7 +667,6 @@
             }
         }
 
-        // Initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 new LostWebRoulette();
