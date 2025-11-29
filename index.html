@@ -210,6 +210,63 @@
             animation: fadeIn 0.5s ease-in;
         }
 
+        .welcome-screen {
+            flex: 1;
+            width: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .welcome-screen.hidden {
+            display: none;
+        }
+
+        .welcome-content {
+            max-width: 700px;
+            text-align: left;
+        }
+
+        .welcome-content h2 {
+            font-size: 2rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-content h3 {
+            font-size: 1.3rem;
+            color: #ffff00;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .info-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .welcome-content a {
+            color: #00ff00;
+            text-decoration: underline;
+        }
+
+        .welcome-content a:hover {
+            text-shadow: 0 0 10px #00ff00;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -357,7 +414,7 @@
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
         }
 
-        @media (max-width: 768px) {
+                    @media (max-width: 768px) {
             .header-frame {
                 padding: 1rem;
             }
@@ -400,6 +457,22 @@
             .year-counter {
                 font-size: 2rem;
             }
+
+            .welcome-content {
+                padding: 1rem;
+            }
+
+            .welcome-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-content h3 {
+                font-size: 1.1rem;
+            }
+
+            .welcome-content p {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -413,12 +486,12 @@
     </div>
 
     <div class="header-frame">
-        <div class="main-title">Lost Web Roulette</div>
+        <div class="main-title">TimeShift</div>
         <div class="subtitle">
-            <span>◆ Digital Archaeology Slot Machine • 1996-2008 ◆</span>
+            <span>◆ Random Snapshots from 1996-2008 ◆</span>
             <div class="controls">
-                <button id="spinButton" class="spin-button">→ SPIN THE WEB ←</button>
-                <span style="opacity: 0.7; font-size: 0.9rem;">Press SPACE to spin</span>
+                <button id="spinButton" class="spin-button">→ JUMP BACK ←</button>
+                <span style="opacity: 0.7; font-size: 0.9rem;">Press SPACE to jump</span>
             </div>
         </div>
     </div>
@@ -438,6 +511,21 @@
             class="website-frame"
             sandbox="allow-scripts allow-forms allow-same-origin"
         ></iframe>
+        <div id="welcomeScreen" class="welcome-screen">
+            <div class="welcome-content">
+                <h2>Welcome to TimeShift</h2>
+                <p>A passion project that lets you explore random snapshots of the early web (1996-2008).</p>
+                
+                <div class="info-section">
+                    <p>Each jump queries the Internet Archive's database in real-time, searching through millions of archived pages to find you a random snapshot. Their API takes 3-10 seconds to respond. If the first search comes up empty, it tries different domains, which adds more wait time. Unlike sites like <a href="https://wiby.org" target="_blank" style="color: #00ff00;">wiby.org</a> that pre-cache their pages, this pulls fresh results every time you jump.</p>
+                </div>
+
+                <div class="info-section" style="text-align: center;">
+                    <p style="font-style: italic; opacity: 0.9; margin-bottom: 0.5rem;">Every forgotten site is a whisper from another time.</p>
+                    <p style="color: #ffff00;">Press SPACE or click the button to begin.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="footer-frame">
@@ -475,6 +563,7 @@
                     loadingMessage: document.getElementById('loadingMessage'),
                     yearCounter: document.getElementById('yearCounter'),
                     websiteFrame: document.getElementById('websiteFrame'),
+                    welcomeScreen: document.getElementById('welcomeScreen'),
                     urlInfo: document.getElementById('urlInfo'),
                     currentEra: document.getElementById('currentEra')
                 };
@@ -520,6 +609,11 @@
 
             async spin() {
                 if (this.isLoading) return;
+                
+                // Hide welcome screen on first jump
+                if (this.elements.welcomeScreen) {
+                    this.elements.welcomeScreen.classList.add('hidden');
+                }
                 
                 this.setLoading(true);
                 this.elements.loadingMessage.textContent = 'Loading...';
@@ -644,10 +738,10 @@
                 
                 if (loading) {
                     this.elements.loadingOverlay.classList.add('active');
-                    this.elements.spinButton.textContent = '⟡ DIGGING...';
+                    this.elements.spinButton.textContent = '⟡ JUMPING...';
                 } else {
                     this.elements.loadingOverlay.classList.remove('active');
-                    this.elements.spinButton.textContent = '→ SPIN THE WEB ←';
+                    this.elements.spinButton.textContent = '→ JUMP BACK ←';
                 }
             }
 
