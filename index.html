@@ -46,6 +46,20 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.5rem 1rem;
+            font-family: 'Courier New', monospace;
+            width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: #00aa00;
         }
 
         .spin-button {
@@ -83,7 +97,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: none;
             justify-content: center;
             align-items: center;
@@ -103,6 +117,7 @@
 
         .loading-text {
             font-size: 1.2rem;
+            text-align: center;
         }
 
         .website-frame {
@@ -110,7 +125,6 @@
             width: 100%;
             border: none;
             background: #000;
-            transition: opacity 0.5s ease;
         }
 
         .footer-frame {
@@ -154,15 +168,15 @@
             opacity: 0.8;
         }
 
-        /* CRT effects without curvature */
-        .monitor-filter {
+        /* Old Monitor Effects */
+        .crt-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 9998;
+            z-index: 9999;
         }
 
         .scanlines {
@@ -174,10 +188,9 @@
             background: linear-gradient(
                 to bottom,
                 transparent 50%,
-                rgba(0, 0, 0, 0.1) 50%
+                rgba(0, 0, 0, 0.3) 50%
             );
             background-size: 100% 4px;
-            animation: scanline 8s linear infinite;
         }
 
         .flicker {
@@ -197,7 +210,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            box-shadow: inset 0 0 60px rgba(0, 255, 0, 0.1);
+            box-shadow: inset 0 0 100px rgba(0, 255, 0, 0.1);
         }
 
         .noise {
@@ -206,7 +219,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
         }
 
         @keyframes spin {
@@ -218,11 +231,6 @@
             0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
             70% { box-shadow: 0 0 0 20px rgba(0, 255, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
-        }
-
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100vh); }
         }
 
         @keyframes flicker {
@@ -268,6 +276,16 @@
                 align-items: flex-start;
             }
             
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
             .info-panel {
                 flex-direction: column;
                 align-items: flex-start;
@@ -281,8 +299,8 @@
     </style>
 </head>
 <body>
-    <!-- Old Monitor Filter -->
-    <div class="monitor-filter">
+    <!-- Old Monitor Overlay -->
+    <div class="crt-overlay">
         <div class="scanlines"></div>
         <div class="flicker"></div>
         <div class="glow"></div>
@@ -294,8 +312,9 @@
         <div class="subtitle">
             <span>Digital Archaeology Slot Machine • 1996-2008</span>
             <div class="controls">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search topic (or leave empty for random)">
                 <button id="spinButton" class="spin-button">SPIN THE WEB</button>
-                <span>Press SPACE</span>
+                <span>Press ENTER to search</span>
             </div>
         </div>
     </div>
@@ -303,7 +322,7 @@
     <div class="content-area">
         <div id="loadingOverlay" class="loading-overlay">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Excavating digital artifacts...</div>
+            <div class="loading-text" id="loadingMessage">Excavating digital artifacts...</div>
         </div>
         <iframe 
             id="websiteFrame" 
@@ -342,7 +361,9 @@
                 this.backendUrl = 'https://lostweb-roulette.lostweb-roulette.workers.dev';
                 this.elements = {
                     spinButton: document.getElementById('spinButton'),
+                    searchInput: document.getElementById('searchInput'),
                     loadingOverlay: document.getElementById('loadingOverlay'),
+                    loadingMessage: document.getElementById('loadingMessage'),
                     websiteFrame: document.getElementById('websiteFrame'),
                     urlInfo: document.getElementById('urlInfo'),
                     discoveredCount: document.getElementById('discoveredCount'),
@@ -355,6 +376,11 @@
 
             initialize() {
                 this.elements.spinButton.addEventListener('click', () => this.spin());
+                this.elements.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.spin();
+                    }
+                });
                 
                 document.addEventListener('keydown', (e) => {
                     if (e.code === 'Space' && !e.target.matches('input, textarea')) {
@@ -368,9 +394,19 @@
 
             async spin() {
                 this.setLoading(true);
+                const searchTerm = this.elements.searchInput.value.trim();
                 
                 try {
-                    const response = await fetch(`${this.backendUrl}/random`);
+                    let url;
+                    if (searchTerm) {
+                        this.elements.loadingMessage.textContent = `Searching for "${searchTerm}" in the archives...`;
+                        url = `${this.backendUrl}/search?q=${encodeURIComponent(searchTerm)}`;
+                    } else {
+                        this.elements.loadingMessage.textContent = 'Excavating random digital artifacts...';
+                        url = `${this.backendUrl}/random`;
+                    }
+
+                    const response = await fetch(url);
                     const data = await response.json();
                     
                     if (data.url) {
@@ -380,7 +416,10 @@
                         this.saveStats();
                         this.celebrate();
                     } else {
-                        this.showError('No archived page found. Try again!');
+                        this.showError(searchTerm ? 
+                            `No pages found about "${searchTerm}" from 1996-2008` : 
+                            'No archived pages found. Try again!'
+                        );
                     }
                 } catch (error) {
                     console.error('Error:', error);
@@ -391,8 +430,8 @@
             }
 
             async displayWebsite(archiveUrl, originalUrl) {
-                this.elements.websiteFrame.src = 'about:blank';
-                this.elements.websiteFrame.style.opacity = '0';
+                // Hide iframe first
+                this.elements.websiteFrame.style.display = 'none';
                 
                 const timestampMatch = archiveUrl.match(/web\/(\d{4})(\d{2})(\d{2})/);
                 if (timestampMatch) {
@@ -407,17 +446,25 @@
                     <strong>Archived:</strong> ${timestampMatch ? `${timestampMatch[1]}-${timestampMatch[2]}` : 'Unknown'}
                 `;
                 
-                await new Promise(resolve => setTimeout(resolve, 300));
+                // Small delay before showing
+                await new Promise(resolve => setTimeout(resolve, 100));
                 
                 this.elements.websiteFrame.src = archiveUrl;
-                this.elements.websiteFrame.style.opacity = '1';
+                this.elements.websiteFrame.style.display = 'block';
                 
+                // Set timeout for iframe loading
+                const loadTimeout = setTimeout(() => {
+                    this.elements.websiteFrame.onerror();
+                }, 10000);
+
                 this.elements.websiteFrame.onload = () => {
+                    clearTimeout(loadTimeout);
                     console.log('Iframe loaded successfully');
                 };
                 
                 this.elements.websiteFrame.onerror = () => {
-                    this.showError('Failed to load the archived page. It may contain blocked content.');
+                    clearTimeout(loadTimeout);
+                    this.showError('This page cannot be displayed. It may contain blocked content or be incomplete.');
                 };
             }
 
@@ -453,13 +500,14 @@
 
             setLoading(loading) {
                 this.elements.spinButton.disabled = loading;
+                this.elements.searchInput.disabled = loading;
                 this.elements.loadingOverlay.style.display = loading ? 'flex' : 'none';
                 this.elements.spinButton.textContent = loading ? 'DIGGING...' : 'SPIN THE WEB';
             }
 
             showError(message) {
                 this.elements.urlInfo.innerHTML = `<span style="color: #ff4444;">${this.escapeHtml(message)}</span>`;
-                this.elements.websiteFrame.src = 'about:blank';
+                this.elements.websiteFrame.style.display = 'none';
             }
 
             saveStats() {
