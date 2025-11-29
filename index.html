@@ -26,6 +26,8 @@
             border-bottom: 3px solid #00ff00;
             padding: 1rem 2rem;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
 
         .main-title {
@@ -62,6 +64,11 @@
             color: #00aa00;
         }
 
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
         .spin-button {
             background: transparent;
             border: 2px solid #00ff00;
@@ -73,7 +80,7 @@
             text-transform: uppercase;
         }
 
-        .spin-button:hover {
+        .spin-button:hover:not(:disabled) {
             background: #00ff00;
             color: #000;
             box-shadow: 0 0 15px #00ff00;
@@ -89,6 +96,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            min-height: 0;
         }
 
         .loading-overlay {
@@ -103,6 +111,10 @@
             align-items: center;
             flex-direction: column;
             z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
         }
 
         .loading-spinner {
@@ -125,6 +137,11 @@
             width: 100%;
             border: none;
             background: #000;
+            display: none;
+        }
+
+        .website-frame.visible {
+            display: block;
         }
 
         .footer-frame {
@@ -132,6 +149,8 @@
             border-top: 3px solid #00ff00;
             padding: 1rem 2rem;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
 
         .info-panel {
@@ -168,6 +187,28 @@
             opacity: 0.8;
         }
 
+        .kofi-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .kofi-button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        .kofi-text {
+            font-size: 0.9rem;
+        }
+
         /* Old Monitor Effects */
         .crt-overlay {
             position: fixed;
@@ -188,9 +229,10 @@
             background: linear-gradient(
                 to bottom,
                 transparent 50%,
-                rgba(0, 0, 0, 0.3) 50%
+                rgba(0, 0, 0, 0.25) 50%
             );
             background-size: 100% 4px;
+            opacity: 0.5;
         }
 
         .flicker {
@@ -210,7 +252,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            box-shadow: inset 0 0 100px rgba(0, 255, 0, 0.1);
+            box-shadow: inset 0 0 100px rgba(0, 255, 0, 0.15);
         }
 
         .noise {
@@ -219,7 +261,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            opacity: 0.3;
         }
 
         @keyframes spin {
@@ -234,27 +277,9 @@
         }
 
         @keyframes flicker {
-            0% { opacity: 0.1; }
-            5% { opacity: 0.1; }
-            10% { opacity: 0.05; }
-            15% { opacity: 0.1; }
-            20% { opacity: 0.05; }
-            25% { opacity: 0.1; }
-            30% { opacity: 0.05; }
-            35% { opacity: 0.1; }
-            40% { opacity: 0.05; }
-            45% { opacity: 0.1; }
-            50% { opacity: 0.05; }
-            55% { opacity: 0.1; }
-            60% { opacity: 0.05; }
-            65% { opacity: 0.1; }
-            70% { opacity: 0.05; }
-            75% { opacity: 0.1; }
-            80% { opacity: 0.05; }
-            85% { opacity: 0.1; }
-            90% { opacity: 0.05; }
-            95% { opacity: 0.1; }
-            100% { opacity: 0.1; }
+            0%, 100% { opacity: 0.1; }
+            10%, 30%, 50%, 70%, 90% { opacity: 0.05; }
+            20%, 40%, 60%, 80% { opacity: 0.12; }
         }
 
         .pulse {
@@ -328,7 +353,6 @@
             id="websiteFrame" 
             class="website-frame"
             sandbox="allow-scripts allow-forms allow-same-origin"
-            loading="lazy"
         ></iframe>
     </div>
 
@@ -347,8 +371,9 @@
                     <div class="stat-label">Time Period</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" id="archaeologyLevel">Novice</div>
-                    <div class="stat-label">Rank</div>
+                    <a href="https://ko-fi.com/dangodingo" target="_blank" class="kofi-button">
+                        <span class="kofi-text">☕ Support on Ko-fi</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -357,8 +382,11 @@
     <script>
         class LostWebRoulette {
             constructor() {
+                // Store stats in memory instead of localStorage
                 this.spinCount = 0;
                 this.backendUrl = 'https://lostweb-roulette.lostweb-roulette.workers.dev';
+                this.isLoading = false;
+                
                 this.elements = {
                     spinButton: document.getElementById('spinButton'),
                     searchInput: document.getElementById('searchInput'),
@@ -367,8 +395,7 @@
                     websiteFrame: document.getElementById('websiteFrame'),
                     urlInfo: document.getElementById('urlInfo'),
                     discoveredCount: document.getElementById('discoveredCount'),
-                    currentEra: document.getElementById('currentEra'),
-                    archaeologyLevel: document.getElementById('archaeologyLevel')
+                    currentEra: document.getElementById('currentEra')
                 };
                 
                 this.initialize();
@@ -376,23 +403,24 @@
 
             initialize() {
                 this.elements.spinButton.addEventListener('click', () => this.spin());
+                
                 this.elements.searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === 'Enter' && !this.isLoading) {
                         this.spin();
                     }
                 });
                 
                 document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Space' && !e.target.matches('input, textarea')) {
+                    if (e.code === 'Space' && !e.target.matches('input, textarea') && !this.isLoading) {
                         e.preventDefault();
                         this.spin();
                     }
                 });
-
-                this.loadStats();
             }
 
             async spin() {
+                if (this.isLoading) return;
+                
                 this.setLoading(true);
                 const searchTerm = this.elements.searchInput.value.trim();
                 
@@ -410,83 +438,69 @@
                     const data = await response.json();
                     
                     if (data.url) {
-                        await this.displayWebsite(data.url, data.original);
+                        this.displayWebsite(data.url, data.original, data.timestamp);
                         this.spinCount++;
                         this.updateStats();
-                        this.saveStats();
                         this.celebrate();
                     } else {
-                        this.showError(searchTerm ? 
-                            `No pages found about "${searchTerm}" from 1996-2008` : 
-                            'No archived pages found. Try again!'
-                        );
+                        this.showError(data.error || 'No archived pages found. Try again!');
+                        this.setLoading(false);
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    this.showError('Network error. Please try again.');
-                } finally {
+                    this.showError('Network error. Please check your connection and try again.');
                     this.setLoading(false);
                 }
             }
 
-            async displayWebsite(archiveUrl, originalUrl) {
-                // Hide iframe first
-                this.elements.websiteFrame.style.display = 'none';
+            displayWebsite(archiveUrl, originalUrl, timestamp) {
+                // Extract year and month from timestamp
+                let year = '-';
+                let month = '-';
                 
-                const timestampMatch = archiveUrl.match(/web\/(\d{4})(\d{2})(\d{2})/);
-                if (timestampMatch) {
-                    const year = timestampMatch[1];
-                    const month = timestampMatch[2];
+                if (timestamp && timestamp.length >= 6) {
+                    year = timestamp.substring(0, 4);
+                    month = timestamp.substring(4, 6);
                     this.elements.currentEra.textContent = `${year}-${month}`;
-                    this.updateArchaeologyLevel(year);
                 }
                 
                 this.elements.urlInfo.innerHTML = `
                     <strong>Original:</strong> ${this.escapeHtml(originalUrl)}<br>
-                    <strong>Archived:</strong> ${timestampMatch ? `${timestampMatch[1]}-${timestampMatch[2]}` : 'Unknown'}
+                    <strong>Archived:</strong> ${year}-${month}
                 `;
                 
-                // Small delay before showing
-                await new Promise(resolve => setTimeout(resolve, 100));
+                // Clear previous iframe
+                this.elements.websiteFrame.src = '';
+                this.elements.websiteFrame.classList.remove('visible');
                 
-                this.elements.websiteFrame.src = archiveUrl;
-                this.elements.websiteFrame.style.display = 'block';
-                
-                // Set timeout for iframe loading
-                const loadTimeout = setTimeout(() => {
-                    this.elements.websiteFrame.onerror();
-                }, 10000);
+                // Small delay to ensure clean state
+                setTimeout(() => {
+                    this.elements.websiteFrame.src = archiveUrl;
+                    
+                    // Handle iframe load
+                    const loadTimeout = setTimeout(() => {
+                        console.log('Iframe load timeout - displaying anyway');
+                        this.elements.websiteFrame.classList.add('visible');
+                        this.setLoading(false);
+                    }, 5000);
 
-                this.elements.websiteFrame.onload = () => {
-                    clearTimeout(loadTimeout);
-                    console.log('Iframe loaded successfully');
-                };
-                
-                this.elements.websiteFrame.onerror = () => {
-                    clearTimeout(loadTimeout);
-                    this.showError('This page cannot be displayed. It may contain blocked content or be incomplete.');
-                };
-            }
-
-            updateArchaeologyLevel(year) {
-                const yearNum = parseInt(year);
-                let level = 'Novice';
-                
-                if (yearNum <= 1997) level = 'Time Traveler';
-                else if (yearNum <= 1999) level = 'Digital Archaeologist';
-                else if (yearNum <= 2001) level = 'Web Historian';
-                else if (yearNum <= 2003) level = 'Explorer';
-                else if (yearNum <= 2005) level = 'Apprentice';
-                
-                this.elements.archaeologyLevel.textContent = level;
+                    this.elements.websiteFrame.onload = () => {
+                        clearTimeout(loadTimeout);
+                        this.elements.websiteFrame.classList.add('visible');
+                        this.setLoading(false);
+                        console.log('Iframe loaded successfully');
+                    };
+                    
+                    this.elements.websiteFrame.onerror = () => {
+                        clearTimeout(loadTimeout);
+                        this.showError('This page cannot be displayed. Some archived content may be incomplete.');
+                        this.setLoading(false);
+                    };
+                }, 100);
             }
 
             updateStats() {
                 this.elements.discoveredCount.textContent = this.spinCount;
-                
-                if (this.spinCount >= 100) this.elements.archaeologyLevel.textContent = 'Master Archaeologist';
-                else if (this.spinCount >= 50) this.elements.archaeologyLevel.textContent = 'Senior Explorer';
-                else if (this.spinCount >= 25) this.elements.archaeologyLevel.textContent = 'Journeyman';
             }
 
             celebrate() {
@@ -499,36 +513,22 @@
             }
 
             setLoading(loading) {
+                this.isLoading = loading;
                 this.elements.spinButton.disabled = loading;
                 this.elements.searchInput.disabled = loading;
-                this.elements.loadingOverlay.style.display = loading ? 'flex' : 'none';
-                this.elements.spinButton.textContent = loading ? 'DIGGING...' : 'SPIN THE WEB';
+                
+                if (loading) {
+                    this.elements.loadingOverlay.classList.add('active');
+                    this.elements.spinButton.textContent = 'DIGGING...';
+                } else {
+                    this.elements.loadingOverlay.classList.remove('active');
+                    this.elements.spinButton.textContent = 'SPIN THE WEB';
+                }
             }
 
             showError(message) {
                 this.elements.urlInfo.innerHTML = `<span style="color: #ff4444;">${this.escapeHtml(message)}</span>`;
-                this.elements.websiteFrame.style.display = 'none';
-            }
-
-            saveStats() {
-                const stats = {
-                    spinCount: this.spinCount,
-                    lastPlayed: new Date().toISOString()
-                };
-                localStorage.setItem('lostweb-stats', JSON.stringify(stats));
-            }
-
-            loadStats() {
-                try {
-                    const stats = JSON.parse(localStorage.getItem('lostweb-stats'));
-                    if (stats && stats.spinCount) {
-                        this.spinCount = stats.spinCount;
-                        this.elements.discoveredCount.textContent = this.spinCount;
-                        this.updateStats();
-                    }
-                } catch (e) {
-                    console.log('No saved stats found');
-                }
+                this.elements.websiteFrame.classList.remove('visible');
             }
 
             escapeHtml(unsafe) {
@@ -541,9 +541,14 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new LostWebRoulette();
+            });
+        } else {
             new LostWebRoulette();
-        });
+        }
     </script>
 </body>
 </html>
